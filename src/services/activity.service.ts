@@ -39,6 +39,21 @@ export const getAllActivities = async () => {
   return activities;
 };
 
+export const getActivityById = async (id: number) => {
+  const activity = await prisma.activity.findFirst({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      quantityTasks: true,
+      tasks: true,
+    },
+  });
+  if (!activity) throw new AppError("Id inválido", 409);
+
+  return activity;
+};
+
 export const updateActivity = async (data: dataCreateActivity, id: number) => {
   const existingActivity = await prisma.activity.findFirst({ where: { id } });
 

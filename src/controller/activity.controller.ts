@@ -3,6 +3,7 @@ import { AppError } from "../error/appError";
 import {
   createActivity,
   deleteActivity,
+  getActivityById,
   getAllActivities,
   updateActivity,
 } from "../services/activity.service";
@@ -39,6 +40,20 @@ export const getAll = async (req: Request, res: Response) => {
   }
 };
 
+export const getById = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    const activity = await getActivityById(id);
+
+    return res.status(200).json({ data: activity });
+  } catch (error) {
+    if (error instanceof AppError)
+      return res.status(error.statusCode).json({ message: error.message });
+
+    return res.status(500).json({ message: "Erro interno do servidor" });
+  }
+};
+
 export const update = async (req: Request, res: Response) => {
   try {
     const data = req.body;
@@ -60,12 +75,10 @@ export const remove = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
     const activityDeleted = await deleteActivity(id);
-    return res
-      .status(200)
-      .json({
-        message: "Atividade deletada com sucesso",
-        data: activityDeleted,
-      });
+    return res.status(200).json({
+      message: "Atividade deletada com sucesso",
+      data: activityDeleted,
+    });
   } catch (error) {
     console.log(error);
     if (error instanceof AppError)
